@@ -3,11 +3,13 @@ const cors = require("cors");
 const connectDB = require("./util/dbconnection");
 const UserRoute = require("./Router/UserRouter");
 const verifyRouter = require("./Router/verificationRouter");
+const exprouter = require("./Router/ExpenseRouter");
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 app.use("/user", UserRoute);
 app.use("/verify", verifyRouter);
+app.use("/expense", exprouter);
 const PORT = 5000;
 app.listen(PORT, async () => {
   try {

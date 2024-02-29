@@ -4,7 +4,6 @@ require("dotenv").config({ path: "./.env" });
 const authenticate = async (req, res, next) => {
   try {
     const JWT_PASSWORD = process.env.JWT_PASSWORD;
-    console.log(JWT_PASSWORD, "at middle");
 
     const token = req.header("Authorization");
 
@@ -13,6 +12,7 @@ const authenticate = async (req, res, next) => {
     const response = await User.findById(user.userId);
 
     req.user = response;
+
     next();
   } catch (err) {
     console.log(err);

@@ -1,34 +1,43 @@
 import axios from "axios";
-import React, { useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { UserContext } from "../store/UserStore/UserProvider";
 
 const LoginForm = () => {
+  const { userLogin } = useContext(UserContext);
+  const [isLoading, setIsloading] = useState(false);
   const EmailRef = useRef();
   const passwordRef = useRef();
   const Navigate = useNavigate();
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const email = EmailRef.current.value;
-    const password = passwordRef.current.value;
-    const loginDetail = { email, password };
-    const resp = await axios.post(
-      "http://localhost:5000/user/login",
-      loginDetail
-    );
-    console.log("resp is", resp);
+    setIsloading(true);
+    try {
+      e.preventDefault();
+      const email = EmailRef.current.value;
+      const password = passwordRef.current.value;
+      const loginDetail = { email, password };
 
-    if (resp.data.token) {
-      localStorage.setItem("token", resp.data.token);
-      return Navigate("/");
-    } else {
-      alert("Wrong Credentials");
+      const resp = await userLogin(loginDetail);
+      console.log("resp is", resp);
+
+      if (resp) {
+        setIsloading(false);
+        // return Navigate("/");
+      } else {
+        setIsloading(false);
+        alert("Wrong Credentials");
+      }
+    } catch (err) {
+      setIsloading(false);
+      console.log(err);
     }
   };
   return (
     <div className="container mt-5 d-flex justify-content-center align-items-center">
       <div className="card">
         <div className="card-body">
-          <h2 className="card-title mb-4">Login</h2>
+          {isLoading && <h2>....Loading Data</h2>}
+          {!isLoading && <h2 className="card-title mb-4">Login</h2>}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="username" className="form-label">
